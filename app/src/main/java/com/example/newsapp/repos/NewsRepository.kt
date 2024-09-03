@@ -5,6 +5,7 @@ import com.example.newsapp.database.ArticleDatabase
 import com.example.newsapp.models.Article
 
 class NewsRepository (val database: ArticleDatabase){
+
     suspend fun getHeadlines(countryCode:String,pageNumber:Int) =
         RetrofitInstance.api.getHeadlines(countryCode,pageNumber)
 
