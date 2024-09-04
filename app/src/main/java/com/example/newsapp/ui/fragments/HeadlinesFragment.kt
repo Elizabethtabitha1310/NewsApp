@@ -80,6 +80,9 @@ lateinit var binding: FragmentHeadlinesBinding
                 }
             }
         })
+        retryButton.setOnClickListener {
+            newsViewModel.getHeadlines("ke")
+        }
     }
     var isError = false
     var isLoading = false
