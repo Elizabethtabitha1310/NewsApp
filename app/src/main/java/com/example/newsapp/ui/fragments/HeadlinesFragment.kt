@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -70,6 +71,7 @@ lateinit var binding: FragmentHeadlinesBinding
                 is Resource.Error ->{
                     hideProgressBar()
                     response.message?.let { message ->
+                        Toast.makeText(activity,"Sorry error: $message",Toast.LENGTH_LONG).show()
                         showErrorMessage(message)
                     }
                 }
