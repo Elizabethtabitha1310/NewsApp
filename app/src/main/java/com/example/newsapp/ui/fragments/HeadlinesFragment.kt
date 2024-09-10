@@ -22,7 +22,7 @@ import com.example.newsapp.util.Constants
 import com.example.newsapp.util.Resource
 
 
-class HeadlinesFragment : Fragment() {
+class HeadlinesFragment : Fragment(R.layout.fragment_headlines) {
 
 lateinit var newsViewModel: NewsViewModel
 lateinit var newsAdapter: NewsAdapter

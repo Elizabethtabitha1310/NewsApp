@@ -19,4 +19,8 @@ interface ArticleDAO {
 
  @Delete
  suspend fun  deleteArticles(article: Article)
+
+ @Query("SELECT * FROM articles")
+ fun getFavouriteNews(): LiveData<List<Article>>
+
 }

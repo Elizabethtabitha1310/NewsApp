@@ -74,7 +74,7 @@ init {
     fun deleteArticles(article: Article) = viewModelScope.launch {
         newRepository.deleteArticles(article)
     }
-fun internetConnection(context: Context):Boolean{
+private fun internetConnection(context: Context):Boolean{
     (context.getSystemService(Context.CONNECTIVITY_SERVICE)as ConnectivityManager).apply {
      return  getNetworkCapabilities(activeNetwork)?.run {
          when{

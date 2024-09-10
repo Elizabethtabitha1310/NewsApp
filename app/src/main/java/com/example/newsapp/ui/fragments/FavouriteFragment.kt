@@ -11,12 +11,13 @@ import androidx.lifecycle.Observer
 import com.example.newsapp.R
 import com.example.newsapp.adapters.NewsAdapter
 import com.example.newsapp.databinding.FragmentFavouriteBinding
+import com.example.newsapp.models.Article
 import com.example.newsapp.ui.NewsActivity
 import com.example.newsapp.ui.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
 
 
-class FavouriteFragment : Fragment() {
+class FavouriteFragment : Fragment(R.layout.fragment_favourite) {
 
     lateinit var newsViewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
@@ -64,9 +65,10 @@ class FavouriteFragment : Fragment() {
         ItemTouchHelper(itemTouchHelperCallback).apply{
             attachToRecyclerView(binding.recyclerFavourites)
         }
-        newsViewModel.getFavouriteNews().observe(viewLifecycleOwner,Observer{ articles ->
+        newsViewModel.getFavouriteNews().observe(viewLifecycleOwner, Observer { articles: List<Article> ->
             newsAdapter.differ.submitList(articles)
         })
+
     }
 
     private fun setupFavoriteRecycler() {

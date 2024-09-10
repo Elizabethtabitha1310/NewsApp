@@ -20,16 +20,11 @@ import com.example.newsapp.databinding.FragmentSearchBinding
 import com.example.newsapp.ui.NewsActivity
 import com.example.newsapp.ui.NewsViewModel
 import com.example.newsapp.util.Constants
-import com.example.newsapp.util.Constants.Companion.SEARCH_NEWS_TIME_DELAY
 import com.example.newsapp.util.Resource
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.lang.Error
 
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(R.layout.fragment_search) {
 
 lateinit var newsViewModel: NewsViewModel
 lateinit var newsAdapter: NewsAdapter
@@ -38,10 +33,6 @@ lateinit var errorTextView: TextView
 lateinit var itemSearchError: CardView
 lateinit var binding: FragmentSearchBinding
 
-    var isError = false
-    var isLoading = false
-    var isLastPage = false
-    var isScrolling = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,60 +41,44 @@ lateinit var binding: FragmentSearchBinding
 
         itemSearchError = view.findViewById(R.id.itemSearchError)
 
-        val inflater =
-            requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view: View = inflater.inflate(R.layout.item_error, null)
+        val inflater = requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view: View = inflater.inflate(R.layout.item_error,null)
 
         retryButton = view.findViewById(R.id.retryButton)
         errorTextView = view.findViewById(R.id.errorText)
 
-        newsViewModel = (activity as NewsActivity).newsViewModel
+        newsViewModel= (activity as NewsActivity).newsViewModel
         setupSearchRecycler()
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
-                putSerializable("article", it)
+                putSerializable("article",it)
             }
-            findNavController().navigate(R.id.action_headlinesFragment2_to_articleFragment, bundle)
+            findNavController().navigate(R.id.action_headlinesFragment2_to_articleFragment,bundle)
         }
-        var job: Job? = null
-        binding.searchEdit.addTextChangedListener() { editable->
-           job?.cancel()
-           job = MainScope().launch {
-               delay(SEARCH_NEWS_TIME_DELAY)
-               editable?.let{
-                   if(editable.toString.isNotEmpty()){
-                       newsViewModel.searchNews(editable.toString)
-                   }
-                   }
-               }
-           }
-        }
-
         newsViewModel.headlines.observe(viewLifecycleOwner, Observer { response ->
-            when (response) {
-                is Resource.Success -> {
+            when(response){
+                is Resource.Success->{
                     hideProgressBar()
                     hideErrorMessage()
-                    response.data?.let { newsResponse ->
+                    response.data?.let {
+                            newsResponse ->
                         newsAdapter.differ.submitList(newsResponse.articles.toList())
                         val totalPages = newsResponse.totalResults / Constants.QUERY_PAGE_SIZE + 2
                         isLastPage = newsViewModel.headlinesPage == totalPages
-                        if (isLastPage) {
-                            binding.recyclerSearch.setPadding(0, 0, 0, 0)
+                        if (isLastPage){
+                            binding.recyclerSearch.setPadding(0,0,0,0)
                         }
                     }
 
                 }
-
-                is Resource.Error -> {
+                is Resource.Error ->{
                     hideProgressBar()
                     response.message?.let { message ->
-                        Toast.makeText(activity, "Sorry error: $message", Toast.LENGTH_LONG).show()
+                        Toast.makeText(activity,"Sorry error: $message", Toast.LENGTH_LONG).show()
                         showErrorMessage(message)
                     }
                 }
-
                 is Resource.Loading -> {
                     showProgressBar()
                 }
@@ -113,16 +88,10 @@ lateinit var binding: FragmentSearchBinding
             newsViewModel.getHeadlines("ke")
         }
     }
-
-
-    private fun setupSearchRecycler() {
-        newsAdapter = NewsAdapter()
-        binding.recyclerSearch.apply {
-            adapter = newsAdapter
-            layoutManager = LinearLayoutManager(activity)
-            addOnScrollListener(this@SearchFragment.scrollListener)
-        }
-    }
+    var isError = false
+    var isLoading = false
+    var isLastPage = false
+    var isScrolling = false
 
     private fun hideProgressBar() {
         binding.paginationProgressBar.visibility = View.INVISIBLE
@@ -170,6 +139,14 @@ lateinit var binding: FragmentSearchBinding
             if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                 isScrolling = true
             }
+        }
+    }
+    private fun setupSearchRecycler() {
+        newsAdapter = NewsAdapter()
+        binding.recyclerSearch.apply {
+            adapter = newsAdapter
+            layoutManager = LinearLayoutManager(activity)
+            addOnScrollListener(this@SearchFragment.scrollListener)
         }
     }
 }
